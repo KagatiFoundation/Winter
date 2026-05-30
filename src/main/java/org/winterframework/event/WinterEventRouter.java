@@ -1,14 +1,23 @@
 package org.winterframework.event;
 
 import org.winterframework.event.annotation.EventListener;
+import org.winterframework.event.strategy.ButtonClickStrategy;
+import org.winterframework.event.strategy.EventBindingStrategy;
+import org.winterframework.event.strategy.MouseEnterStrategy;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.List;
 
 public class WinterEventRouter {
+    private static final List<EventBindingStrategy> strategies = List.of(
+        new ButtonClickStrategy(),
+        new MouseEnterStrategy()
+    );
+
     public static void bindEvents(Object controllerInstance) {
         Class<?> clazz = controllerInstance.getClass();
 
@@ -28,17 +37,17 @@ public class WinterEventRouter {
 
                     method.setAccessible(true);
 
-                    switch (eventConfig.type()) {
-                        case ButtonClick: {
-                            if (componentInstance instanceof AbstractButton button) {
-                                button.addActionListener(e -> invokeEventListener(method, EventType.ButtonClick, controllerInstance, e));
-                                System.out.println("Winter: Wired click event from '" + eventConfig.component() + "' to " + method.getName() + "()");
-                            }
+                    boolean strategyFound = false;
+                    for (EventBindingStrategy strategy: strategies) {
+                        if (strategy.supports(eventConfig.type(), componentInstance)) {
+                            strategy.bind(componentInstance, method, controllerInstance);
+                            strategyFound = true;
                             break;
                         }
-                        default: {
-                            System.out.println("Event type not supported yet!");
-                        }
+                    }
+
+                    if (!strategyFound) {
+                        System.err.println("Winter Warning: Unsupported event combination [" + eventConfig.type() + "] for component type " + componentInstance.getClass().getSimpleName());
                     }
                 }
                 catch (NoSuchFieldException e) {
@@ -50,7 +59,7 @@ public class WinterEventRouter {
         }
     }
 
-    private static void invokeEventListener(
+    public static void invokeEventListener(
         Method method,
         EventType type,
         Object instance,
@@ -59,16 +68,21 @@ public class WinterEventRouter {
         try {
             Parameter[] parameters = method.getParameters();
 
-            if (parameters.length != args.length) {
-                System.err.println("Expected ActionEvent as the first parameter on method: " + method.getName());
+            if (parameters.length == 0) {
+                method.invoke(instance);
                 return;
             }
 
-            if (type == EventType.ButtonClick) {
-                Parameter actionEventParameter = parameters[0];
-                if (!actionEventParameter.getType().equals(ActionEvent.class)) {
-                    throw new IllegalArgumentException("Invalid event type present as the first argument on method " + method.getName() + ".");
-                }
+            if (parameters.length != args.length) {
+                System.err.println("Parameter mismatch on method: " + method.getName());
+                return;
+            }
+
+            if (type == EventType.ButtonClick && !parameters[0].getType().equals(ActionEvent.class)) {
+                throw new IllegalArgumentException("Expected ActionEvent parameter on method " + method.getName());
+            }
+            if (type == EventType.MouseEnter && !parameters[0].getType().equals(MouseEvent.class)) {
+                throw new IllegalArgumentException("Expected MouseEvent parameter on method " + method.getName());
             }
 
             method.invoke(instance, args);

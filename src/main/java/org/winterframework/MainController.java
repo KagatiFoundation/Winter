@@ -12,19 +12,21 @@ import javax.swing.JFrame;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 
 @WinterApplication
 public class MainController {
     @UIComponent(text = "Execute Task")
     private JButton submitButton;
 
-    @UIComponent(text = "Save Task")
-    private JButton saveButton;
-
     @EventListener(component = "submitButton", type = EventType.ButtonClick)
-    @EventListener(component = "saveButton", type = EventType.ButtonClick)
     public void onSubmit(ActionEvent e) {
         System.out.println("Button was clicked!");
+    }
+
+    @EventListener(component = "submitButton", type = EventType.MouseEnter)
+    public void onSubmitButtonHover(MouseEvent e) {
+        System.out.println("Mouse entered!");
     }
 
     @EntryPoint
@@ -35,7 +37,6 @@ public class MainController {
         frame.setLayout(new FlowLayout());
 
         frame.add(submitButton);
-        frame.add(saveButton);
         frame.setVisible(true);
     }
 
