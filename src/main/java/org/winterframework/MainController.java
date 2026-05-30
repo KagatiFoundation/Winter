@@ -18,7 +18,11 @@ public class MainController {
     @UIComponent(text = "Execute Task")
     private JButton submitButton;
 
+    @UIComponent(text = "Save Task")
+    private JButton saveButton;
+
     @EventListener(component = "submitButton", type = EventType.ButtonClick)
+    @EventListener(component = "saveButton", type = EventType.ButtonClick)
     public void onSubmit(ActionEvent e) {
         System.out.println("Button was clicked!");
     }
@@ -31,6 +35,7 @@ public class MainController {
         frame.setLayout(new FlowLayout());
 
         frame.add(submitButton);
+        frame.add(saveButton);
         frame.setVisible(true);
     }
 

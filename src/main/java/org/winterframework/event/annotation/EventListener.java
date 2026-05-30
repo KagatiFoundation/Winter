@@ -2,13 +2,11 @@ package org.winterframework.event.annotation;
 
 import org.winterframework.event.EventType;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+@Repeatable(EventListeners.class)
 public @interface EventListener {
 	String component(); 
     EventType type();

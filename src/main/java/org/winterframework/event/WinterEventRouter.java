@@ -13,36 +13,36 @@ public class WinterEventRouter {
         Class<?> clazz = controllerInstance.getClass();
 
         for (Method method: clazz.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(EventListener.class)) {
-                EventListener config = method.getAnnotation(EventListener.class);
+            EventListener[] eventConfigs = method.getAnnotationsByType(EventListener.class);
 
+            for (EventListener eventConfig: eventConfigs) {
                 try {
-                    Field field = clazz.getDeclaredField(config.component());
+                    Field field = clazz.getDeclaredField(eventConfig.component());
                     field.setAccessible(true);
 
                     Object componentInstance = field.get(controllerInstance);
 
                     if (componentInstance == null) {
-                        throw new IllegalStateException("Field " + config.component() + " must be instantiated before binding events.");
+                        throw new IllegalStateException("Field " + eventConfig.component() + " must be instantiated before binding events.");
                     }
 
                     method.setAccessible(true);
 
-                    switch (config.type()) {
+                    switch (eventConfig.type()) {
                         case ButtonClick: {
                             if (componentInstance instanceof AbstractButton button) {
                                 button.addActionListener(e -> invokeEventListener(method, EventType.ButtonClick, controllerInstance, e));
+                                System.out.println("Winter: Wired click event from '" + eventConfig.component() + "' to " + method.getName() + "()");
                             }
                             break;
                         }
-
                         default: {
-                            System.out.println("Not supported!");
+                            System.out.println("Event type not supported yet!");
                         }
                     }
                 }
                 catch (NoSuchFieldException e) {
-                    System.err.println("Error: No component named '" + config.component() + "' found in controller.");
+                    System.err.println("Error: No component named '" + eventConfig.component() + "' found in controller.");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
