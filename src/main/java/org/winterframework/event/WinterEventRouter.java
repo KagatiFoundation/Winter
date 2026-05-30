@@ -1,6 +1,5 @@
-package org.winterframework.core;
+package org.winterframework.event;
 
-import org.winterframework.event.EventType;
 import org.winterframework.event.annotation.EventListener;
 
 import javax.swing.*;

@@ -1,6 +1,7 @@
 package org.winterframework;
 
 import org.winterframework.core.WinterApplicationRunner;
+import org.winterframework.core.annotation.UIComponent;
 import org.winterframework.event.EventType;
 import org.winterframework.event.annotation.EventListener;
 import org.winterframework.core.autoconfigure.WinterApplication;
@@ -14,6 +15,7 @@ import java.awt.event.ActionEvent;
 
 @WinterApplication
 public class MainController {
+    @UIComponent(text = "Execute Task")
     private JButton submitButton;
 
     @EventListener(component = "submitButton", type = EventType.ButtonClick)
@@ -27,8 +29,6 @@ public class MainController {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(300, 200);
         frame.setLayout(new FlowLayout());
-
-        this.submitButton = new JButton("Submit");
 
         frame.add(submitButton);
         frame.setVisible(true);

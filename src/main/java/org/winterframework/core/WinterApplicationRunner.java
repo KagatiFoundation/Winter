@@ -1,7 +1,9 @@
 package org.winterframework.core;
 
 import org.winterframework.core.autoconfigure.EntryPoint;
+import org.winterframework.core.autoconfigure.UIComponentInjector;
 import org.winterframework.core.autoconfigure.WinterApplication;
+import org.winterframework.event.WinterEventRouter;
 
 import java.lang.reflect.Method;
 
@@ -15,6 +17,7 @@ public class WinterApplicationRunner {
 
         try {
             Object appInstance = clazz.getDeclaredConstructor().newInstance();
+            UIComponentInjector.inject(appInstance);
 
             for (Method method: clazz.getDeclaredMethods()) {
                 method.setAccessible(true);
