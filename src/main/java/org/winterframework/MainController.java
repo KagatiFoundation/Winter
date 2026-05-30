@@ -2,10 +2,10 @@ package org.winterframework;
 
 import org.winterframework.core.WinterApplicationRunner;
 import org.winterframework.core.annotation.UIComponent;
-import org.winterframework.event.EventType;
-import org.winterframework.event.annotation.EventListener;
 import org.winterframework.core.autoconfigure.WinterApplication;
 import org.winterframework.core.autoconfigure.EntryPoint;
+import org.winterframework.event.annotation.OnClick;
+import org.winterframework.event.annotation.OnMouseEnter;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,12 +19,12 @@ public class MainController {
     @UIComponent(text = "Execute Task")
     private JButton submitButton;
 
-    @EventListener(component = "submitButton", type = EventType.ButtonClick)
+    @OnClick(component = "submitButton")
     public void onSubmit(ActionEvent e) {
         System.out.println("Button was clicked!");
     }
 
-    @EventListener(component = "submitButton", type = EventType.MouseEnter)
+    @OnMouseEnter(component = "submitButton")
     public void onSubmitButtonHover(MouseEvent e) {
         System.out.println("Mouse entered!");
     }

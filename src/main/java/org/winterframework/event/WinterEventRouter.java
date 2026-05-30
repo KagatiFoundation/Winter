@@ -1,12 +1,13 @@
 package org.winterframework.event;
 
-import org.winterframework.event.annotation.EventListener;
+import org.winterframework.event.annotation.WinterEvent;
 import org.winterframework.event.strategy.ButtonClickStrategy;
 import org.winterframework.event.strategy.EventBindingStrategy;
 import org.winterframework.event.strategy.MouseEnterStrategy;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -22,38 +23,39 @@ public class WinterEventRouter {
         Class<?> clazz = controllerInstance.getClass();
 
         for (Method method: clazz.getDeclaredMethods()) {
-            EventListener[] eventConfigs = method.getAnnotationsByType(EventListener.class);
+            for (Annotation annotation: method.getAnnotations()) {
+                Class<? extends Annotation> annotationType = annotation.annotationType();
 
-            for (EventListener eventConfig: eventConfigs) {
-                try {
-                    Field field = clazz.getDeclaredField(eventConfig.component());
-                    field.setAccessible(true);
+                if (annotationType.isAnnotationPresent(WinterEvent.class)) {
+                    WinterEvent meta = annotationType.getAnnotation(WinterEvent.class);
+                    EventType eventType = meta.type();
 
-                    Object componentInstance = field.get(controllerInstance);
+                    try {
+                        Method componentMethod = annotationType.getMethod("component");
+                        String componentName = (String) componentMethod.invoke(annotation);
 
-                    if (componentInstance == null) {
-                        throw new IllegalStateException("Field " + eventConfig.component() + " must be instantiated before binding events.");
-                    }
+                        Field field = clazz.getDeclaredField(componentName);
+                        field.setAccessible(true);
+                        Object componentInstance = field.get(controllerInstance);
 
-                    method.setAccessible(true);
+                        if (componentInstance == null) {
+                            throw new IllegalStateException("Field " + componentName + " must be instantiated before binding events.");
+                        }
 
-                    boolean strategyFound = false;
-                    for (EventBindingStrategy strategy: strategies) {
-                        if (strategy.supports(eventConfig.type(), componentInstance)) {
-                            strategy.bind(componentInstance, method, controllerInstance);
-                            strategyFound = true;
-                            break;
+                        method.setAccessible(true);
+
+                        for (EventBindingStrategy strategy : strategies) {
+                            if (strategy.supports(eventType, componentInstance)) {
+                                strategy.bind(componentInstance, method, controllerInstance);
+                                System.out.println("Winter: Bound meta-event " + annotationType.getSimpleName() + " using " + strategy.getClass().getSimpleName());
+                                break;
+                            }
                         }
                     }
-
-                    if (!strategyFound) {
-                        System.err.println("Winter Warning: Unsupported event combination [" + eventConfig.type() + "] for component type " + componentInstance.getClass().getSimpleName());
+                    catch (Exception e) {
+                        System.err.println("Winter Error: Failed to process meta-event annotation on method " + method.getName());
+                        e.printStackTrace();
                     }
-                }
-                catch (NoSuchFieldException e) {
-                    System.err.println("Error: No component named '" + eventConfig.component() + "' found in controller.");
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
         }
