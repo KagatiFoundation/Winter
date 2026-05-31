@@ -1,9 +1,7 @@
 package org.winterframework.event;
 
 import org.winterframework.event.annotation.WinterEvent;
-import org.winterframework.event.strategy.ButtonClickStrategy;
-import org.winterframework.event.strategy.EventBindingStrategy;
-import org.winterframework.event.strategy.MouseEnterStrategy;
+import org.winterframework.event.strategy.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -16,7 +14,8 @@ import java.util.List;
 public class WinterEventRouter {
     private static final List<EventBindingStrategy> strategies = List.of(
         new ButtonClickStrategy(),
-        new MouseEnterStrategy()
+        new MouseEnterStrategy(),
+        new MouseMoveStrategy()
     );
 
     public static void bindEvents(Object controllerInstance) {

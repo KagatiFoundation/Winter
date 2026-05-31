@@ -22,7 +22,11 @@ public class UIComponentInjector {
                     field.set(controllerInstance, instantiatedComponent);
                 }
                 catch (Exception e) {
-                    System.err.println("Winter Error: Failed to auto-instantiate field: " + field.getName());
+                    System.err.println(
+                        "Winter Error: Failed to auto-instantiate field: "
+                            + field.getName()
+                            + ". Make sure the component contains a constructor with a String as an argument."
+                    );
                     e.printStackTrace();
                 }
             }

@@ -6,6 +6,7 @@ import org.winterframework.core.autoconfigure.WinterApplication;
 import org.winterframework.core.autoconfigure.EntryPoint;
 import org.winterframework.event.annotation.OnClick;
 import org.winterframework.event.annotation.OnMouseEnter;
+import org.winterframework.event.annotation.OnMouseMove;
 
 import javax.swing.*;
 
@@ -21,6 +22,9 @@ public class MainController {
     @UIComponent(text = "Ramesh")
     private JLabel usernameLabel;
 
+    @UIComponent(text = "Application Frame")
+    private JFrame mainFrame;
+
     @OnClick(component = "submitButton")
     public void onSubmit(ActionEvent e) {
         System.out.println("Button was clicked!");
@@ -31,16 +35,20 @@ public class MainController {
         System.out.println("Mouse entered!");
     }
 
+    @OnMouseMove(component = "mainFrame")
+    public void onMouseMoveOnMainFrame() {
+        System.out.println("Move ya all!");
+    }
+
     @EntryPoint
     public void init() {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300, 200);
-        frame.setLayout(new FlowLayout());
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setSize(300, 200);
+        mainFrame.setLayout(new FlowLayout());
 
-        frame.add(usernameLabel);
-        frame.add(submitButton);
-        frame.setVisible(true);
+        mainFrame.add(usernameLabel);
+        mainFrame.add(submitButton);
+        mainFrame.setVisible(true);
     }
 
     public static void main(String[] args) {
