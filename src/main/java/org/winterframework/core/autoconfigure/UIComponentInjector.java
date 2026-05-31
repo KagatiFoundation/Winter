@@ -2,7 +2,7 @@ package org.winterframework.core.autoconfigure;
 
 import org.winterframework.core.annotation.UIComponent;
 
-import javax.swing.*;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
 public class UIComponentInjector {
@@ -15,15 +15,11 @@ public class UIComponentInjector {
 
                 try {
                     field.setAccessible(true);
-                    Object instantiatedComponent = null;
 
-                    if (field.getType() == JButton.class) {
-                        instantiatedComponent = new JButton(componentConfig.text());
-                    }
+                    Constructor<?> constructor = field.getType().getConstructor(String.class);
+                    Object instantiatedComponent = constructor.newInstance(componentConfig.text());
 
-                    if (instantiatedComponent != null) {
-                        field.set(controllerInstance, instantiatedComponent);
-                    }
+                    field.set(controllerInstance, instantiatedComponent);
                 }
                 catch (Exception e) {
                     System.err.println("Winter Error: Failed to auto-instantiate field: " + field.getName());

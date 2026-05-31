@@ -7,8 +7,7 @@ import org.winterframework.core.autoconfigure.EntryPoint;
 import org.winterframework.event.annotation.OnClick;
 import org.winterframework.event.annotation.OnMouseEnter;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -18,6 +17,9 @@ import java.awt.event.MouseEvent;
 public class MainController {
     @UIComponent(text = "Execute Task")
     private JButton submitButton;
+
+    @UIComponent(text = "Ramesh")
+    private JLabel usernameLabel;
 
     @OnClick(component = "submitButton")
     public void onSubmit(ActionEvent e) {
@@ -36,6 +38,7 @@ public class MainController {
         frame.setSize(300, 200);
         frame.setLayout(new FlowLayout());
 
+        frame.add(usernameLabel);
         frame.add(submitButton);
         frame.setVisible(true);
     }
