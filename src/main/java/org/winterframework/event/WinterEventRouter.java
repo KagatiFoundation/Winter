@@ -46,7 +46,6 @@ public class WinterEventRouter {
                         for (EventBindingStrategy strategy : strategies) {
                             if (strategy.supports(eventType, componentInstance)) {
                                 strategy.bind(componentInstance, method, controllerInstance);
-                                System.out.println("Winter: Bound meta-event " + annotationType.getSimpleName() + " using " + strategy.getClass().getSimpleName());
                                 break;
                             }
                         }
@@ -75,7 +74,7 @@ public class WinterEventRouter {
             }
 
             if (parameters.length != args.length) {
-                System.err.println("Parameter mismatch on method: " + method.getName());
+                System.err.println("Winter Error: Parameter mismatch on method: " + method.getName());
                 return;
             }
 
@@ -88,7 +87,7 @@ public class WinterEventRouter {
 
             method.invoke(instance, args);
         } catch (Exception e) {
-            System.err.println("Failed to execute event handler method: " + method.getName());
+            System.err.println("Winter Error: Failed to execute event handler method: " + method.getName());
             e.printStackTrace();
         }
     }

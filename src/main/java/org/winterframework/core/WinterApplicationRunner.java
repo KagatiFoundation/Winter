@@ -3,7 +3,6 @@ package org.winterframework.core;
 import org.winterframework.core.autoconfigure.EntryPoint;
 import org.winterframework.core.autoconfigure.UIComponentInjector;
 import org.winterframework.core.autoconfigure.WinterApplication;
-import org.winterframework.event.WinterEventRouter;
 
 import java.lang.reflect.Method;
 
@@ -27,8 +26,6 @@ public class WinterApplicationRunner {
                     break;
                 }
             }
-
-            WinterEventRouter.bindEvents(appInstance);
         }
         catch (NoSuchMethodException e) {
             System.err.println("Winter Error: Your application class must have a default, no-argument constructor.");
