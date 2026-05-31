@@ -21,8 +21,6 @@ public class UIComponentInjector {
             field.setAccessible(true);
             Object instantiatedObject = null;
 
-            UIComponent componentConfig = field.getAnnotation(UIComponent.class);
-
             try {
                 if (field.isAnnotationPresent(UIContainer.class)) {
                     Constructor<?> ctor = field.getType().getConstructor();
@@ -33,6 +31,7 @@ public class UIComponentInjector {
                     inject(instantiatedObject);
                 }
                 else if (field.isAnnotationPresent(UIComponent.class)) {
+                    UIComponent componentConfig = field.getAnnotation(UIComponent.class);
                     try {
                         Constructor<?> stringCtor = field.getType().getConstructor(String.class);
                         stringCtor.setAccessible(true);
@@ -52,7 +51,7 @@ public class UIComponentInjector {
             }
         }
 
-        injectUIControllers(controllerInstance);
+        insertComponentsIntoContainer(controllerInstance);
 
         if (clazz.isAnnotationPresent(Controller.class)) {
             for (Method method : clazz.getDeclaredMethods()) {
@@ -70,7 +69,7 @@ public class UIComponentInjector {
         WinterEventRouter.bindEvents(controllerInstance);
     }
 
-    private static void injectUIControllers(Object controllerInstance) {
+    private static void insertComponentsIntoContainer(Object controllerInstance) {
         Class<?> clazz = controllerInstance.getClass();
 
         for (Field field: clazz.getDeclaredFields()) {
