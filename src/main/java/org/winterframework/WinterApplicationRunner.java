@@ -2,7 +2,9 @@ package org.winterframework;
 
 import org.winterframework.autoconfigure.WinterApplication;
 import org.winterframework.core.context.WinterContext;
+import org.winterframework.core.engine.ComponentInstantiator;
 import org.winterframework.core.engine.ComponentTreeBuilder;
+import org.winterframework.core.engine.LifecycleMethodsExecutor;
 import org.winterframework.core.node.ComponentNode;
 import org.winterframework.exception.FrameInstantiationException;
 
@@ -31,7 +33,24 @@ public class WinterApplicationRunner {
     private static void launch(Class<?> mainFrameClass) {
         JFrame mainFrame = (JFrame) WinterContext.getInstance(mainFrameClass);
         ComponentNode rootNode = ComponentTreeBuilder.buildTree(mainFrame.getClass());
-        printTree(rootNode, "");
+        rootNode.setInstance(mainFrame);
+
+        LifecycleMethodsExecutor.executeBeforeMount(rootNode);
+
+        mainFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                LifecycleMethodsExecutor.executeUnmountLifecycle(rootNode);
+                System.exit(0);
+            }
+        });
+
+        ComponentInstantiator.instantiateNode(rootNode);
+
+        LifecycleMethodsExecutor.executeAfterMount(rootNode);
+
+        LifecycleMethodsExecutor.executeMountLifecycle(rootNode);
+        mainFrame.setVisible(true);
     }
 
     private static void printTree(ComponentNode node, String indent) {
@@ -47,6 +66,7 @@ public class WinterApplicationRunner {
 
         try {
             mainFrameInstance = (JFrame) props.mainFrameClass().getDeclaredConstructor(String.class).newInstance(props.title());
+            mainFrameInstance.setSize(props.width(), props.height());
         }
         catch (NoSuchMethodException | InstantiationException e) {
             throw new FrameInstantiationException(props.mainFrameClass());

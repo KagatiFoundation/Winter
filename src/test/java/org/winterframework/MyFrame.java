@@ -1,5 +1,6 @@
 package org.winterframework;
 
+import org.winterframework.component.annotation.AfterMount;
 import org.winterframework.stereotype.Component;
 import org.winterframework.stereotype.Frame;
 
@@ -13,6 +14,12 @@ public class MyFrame extends JFrame {
 
     private MyPanel panel;
     private MyPanel2 panel2;
+
+    @AfterMount
+    public void init() {
+        add(panel);
+        add(panel2);
+    }
 }
 
 @Component(text = "My Panel")
