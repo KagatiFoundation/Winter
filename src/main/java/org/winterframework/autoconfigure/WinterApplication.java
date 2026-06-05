@@ -1,4 +1,4 @@
-package org.winterframework.core.annotation;
+package org.winterframework.autoconfigure;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,7 +6,5 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface UIComponent {
-	String text() default "";	
-}
+@Target(ElementType.TYPE)
+public @interface WinterApplication {}

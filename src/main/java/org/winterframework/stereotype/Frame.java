@@ -1,4 +1,4 @@
-package org.winterframework.window.annotation;
+package org.winterframework.stereotype;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,8 +7,9 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Window {
-    String title() default "Winter Application";
+@Component
+public @interface Frame {
+    String title() default "";
     int width() default 600;
     int height() default 400;
 }
