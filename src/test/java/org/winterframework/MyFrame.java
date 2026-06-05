@@ -7,6 +7,10 @@ import javax.swing.*;
 
 @Frame(title = "Main Frame")
 public class MyFrame extends JFrame {
+    public MyFrame(String title) {
+        super(title);
+    }
+
     private MyPanel panel;
     private MyPanel2 panel2;
 }
